@@ -19,6 +19,7 @@ public class IO {
     }
 
     public double filter(double input){
+        //filter
         double x = Math.copySign(Math.pow(input, 2), input);
         return MathUtil.applyDeadband(x, DEADZONE);
     }
