@@ -24,5 +24,20 @@ public class IO {
         return MathUtil.applyDeadband(x, DEADZONE);
     }
 
+    public double getLeftX(){
+        return filter(xbox.getLeftX());
+    }
+
+    public double getRightX(){
+        return filter(xbox.getRightX());
+    }
+    
+    public double getLeftY(){
+        return filter(xbox.getLeftY());
+    }
+
+    public double getRightY(){
+        return filter(xbox.getRightY());
+    }
 }
 
