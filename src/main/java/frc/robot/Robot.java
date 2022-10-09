@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,8 +19,24 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+
+  private WPI_TalonSRX frontLeft;
+  private WPI_TalonSRX backLeft;
+  private WPI_TalonSRX frontRight;
+  private WPI_TalonSRX backRight;
+
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    frontLeft= new WPI_TalonSRX (10);
+    backLeft= new WPI_TalonSRX (13);
+    frontRight= new WPI_TalonSRX (11);
+    backRight= new WPI_TalonSRX (12);
+    frontLeft.setInverted(true);
+    backLeft.setInverted(true);
+    backLeft.follow(frontLeft);
+    backRight.follow(frontRight);
+    m_myRobot= new DifferentialDrive(frontLeft, frontRight);
+  }
 
   @Override
   public void robotPeriodic() {}
@@ -33,7 +51,10 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    
+
+  }
 
   @Override
   public void disabledInit() {}
@@ -46,4 +67,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {}
+
+  @Override
+  public void simulationInit() {}
+
+  @Override
+  public void simulationPeriodic() {}
 }
