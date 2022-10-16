@@ -23,11 +23,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    io.init();
     }
 
   @Override
   public void robotPeriodic() {
-    io.init();
   }
 
   @Override
