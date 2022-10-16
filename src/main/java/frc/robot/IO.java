@@ -19,9 +19,25 @@ public class IO {
     }
 
     public double filter(double input){
+        //filter
         double x = Math.copySign(Math.pow(input, 2), input);
         return MathUtil.applyDeadband(x, DEADZONE);
     }
 
+    public double getLeftX(){
+        return filter(xbox.getLeftX());
+    }
+
+    public double getRightX(){
+        return filter(xbox.getRightX());
+    }
+    
+    public double getLeftY(){
+        return filter(xbox.getLeftY());
+    }
+
+    public double getRightY(){
+        return filter(xbox.getRightY());
+    }
 }
 
