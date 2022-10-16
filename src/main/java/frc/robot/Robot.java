@@ -20,12 +20,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    IO io = new IO();
-    io.init();
   }
-
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+  }
 
   @Override
   public void autonomousInit() {}

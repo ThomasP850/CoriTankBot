@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -16,11 +17,16 @@ public class IO {
     private final int XBOX_PORT = 0;
     private final double DEADZONE = 0.05;
     private XboxController xbox;
+    private Button rightTriggerButton;
+    private Button leftTriggerButton;
+    private Button radialUp;
+    private Button radialRight;
+    private Button radialDown;
+    private Button radialLeft;
 
     public void init(){
         xbox = new XboxController(XBOX_PORT);
-
-        bind(ButtonActionType.WHEN_PRESSED, ControllerButton.kA, new InstantCommand(() -> System.out.println("A button!")));
+        initializeCustomButtons();
     }
 
     public double filter(double input){
@@ -57,8 +63,7 @@ public class IO {
          }
     }    
 
-    public void bind(ButtonActionType type, ControllerButton xboxButton, CommandBase command)
-    {
+    public void bind(ButtonActionType type, ControllerButton xboxButton, CommandBase command) {
         JoystickButton joystickButton = new JoystickButton(xbox, xboxButton.VALUE);
         
         switch(type)
@@ -85,6 +90,27 @@ public class IO {
 
     }
 
+    public void initializeCustomButtons(){
+        rightTriggerButton = new Button( () -> {
+            return xbox.getRightTriggerAxis()>0.5; 
+        } );
+        leftTriggerButton = new Button( () -> {
+            return xbox.getLeftTriggerAxis()>0.5;
+        } );
+        radialUp = new Button( () -> {
+            return xbox.getPOV()==0;
+        } );
+        radialRight = new Button( () -> {
+            return xbox.getPOV()==90;
+        } );
+        radialDown = new Button( () -> {
+            return xbox.getPOV()==180;
+        } );
+        radialLeft = new Button( () -> {
+            return xbox.getPOV()==270;
+        } );
+    }
+    
     public double getLeftX(){
         return filter(xbox.getLeftX());
     }
