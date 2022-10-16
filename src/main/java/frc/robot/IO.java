@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import javax.swing.plaf.synth.SynthScrollBarUI;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 /** Add your docs here. */
@@ -24,8 +28,10 @@ public class IO {
     public void init(){
         xbox = new XboxController(XBOX_PORT);
         initializeCustomButtons();
+
+        radialUp.whenPressed(new InstantCommand(() -> System.out.println("UP DPAD")));
     }
-    
+
     public double filter(double input){
         double x = Math.copySign(Math.pow(input, 2), input);
         return MathUtil.applyDeadband(x, DEADZONE);
