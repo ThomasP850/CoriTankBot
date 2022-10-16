@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -23,10 +28,20 @@ public class IO {
     private Button radialRight;
     private Button radialDown;
     private Button radialLeft;
+    private Map<Integer, Button> customButtons;
+
 
     public void init(){
         xbox = new XboxController(XBOX_PORT);
         initializeCustomButtons();
+        customButtons = Map.of(
+            11,rightTriggerButton,
+            12, leftTriggerButton,
+            13, radialUp,
+            14, radialRight,
+            15, radialDown,
+            16, radialLeft
+        );
     }
 
     public double filter(double input){
@@ -54,7 +69,13 @@ public class IO {
         kX(3),
         kY(4),
         kBack(7),
-        kStart(8);
+        kStart(8),
+        krightTriggerButton(11),
+        kleftTriggerButton(12),
+        kradialUp(13),
+        kradialRight(14),
+        kradialDown(15),
+        kradialLeft(16);
 
         public final int VALUE;
         
@@ -64,28 +85,37 @@ public class IO {
     }    
 
     public void bind(ButtonActionType type, ControllerButton xboxButton, CommandBase command) {
-        JoystickButton joystickButton = new JoystickButton(xbox, xboxButton.VALUE);
+        Button button;
+        if (xboxButton.VALUE >= 11)
+        {
+            button = customButtons.get(xboxButton.VALUE);
+        }
+        else
+        {
+            button = new JoystickButton(xbox, xboxButton.VALUE);
+        }
         
         switch(type)
         {
             case CANCEL_WHEN_PRESSED:
-                joystickButton.cancelWhenPressed(command);
+                button.cancelWhenPressed(command);
                 break;
             case TOGGLE_WHEN_PRESSED:
-                joystickButton.toggleWhenPressed(command);
+                button.toggleWhenPressed(command);
                 break;
             case WHEN_HELD:
-                joystickButton.whenHeld(command);
+                button.whenHeld(command);
                 break;
             case WHEN_PRESSED:
-                joystickButton.whenPressed(command);
+                button.whenPressed(command);
                 break;
             case WHEN_RELEASED:
-                joystickButton.whenReleased(command);
+                button.whenReleased(command);
                 break;
             case WHILE_HELD:
-                joystickButton.whileHeld(command);
+                button.whileHeld(command);
                 break;
+            
         }
 
     }
