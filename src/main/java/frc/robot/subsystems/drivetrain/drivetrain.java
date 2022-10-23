@@ -4,12 +4,16 @@
 
 package frc.robot.subsystems.drivetrain;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drivetrain.commands.DriveCommand;
 
 public class drivetrain extends SubsystemBase {
+
   /** Creates a new drivetrain. */
   private WPI_TalonSRX frontLeft;
   private WPI_TalonSRX frontRight;
@@ -17,31 +21,44 @@ public class drivetrain extends SubsystemBase {
   private WPI_TalonSRX backRight;
   private DifferentialDrive m_myRobot;
 
+  private MotorControllerGroup leftMotorGroup;
+  private MotorControllerGroup rightMotorGroup;
+
   public void Init() {
     frontLeft = new WPI_TalonSRX(10);
     frontRight = new WPI_TalonSRX(11);
-    backLeft = new WPI_TalonSRX(12);
-    backRight = new WPI_TalonSRX(13);
-    frontLeft.setInverted(true);
-    backLeft.setInverted(true);
-    frontLeft.follow(backLeft);
-    frontRight.follow(backRight);
-    m_myRobot = new DifferentialDrive(backLeft, backRight);
-  }
-  public drivetrain() {
-  
-  }
-public void setLeftspeed(){
-  backLeft.set(ControlMode.PercentOutput, 1);
-  
-}
-public void setRightspeed(){
-  backRight.set(ControlMode.PercentOutput, 1);
-  
-}
+    backLeft = new WPI_TalonSRX(13);
+    backRight = new WPI_TalonSRX(12);
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+    frontRight.setInverted(true);
+    backRight.setInverted(true);
+
+    leftMotorGroup = new MotorControllerGroup(backLeft, frontLeft);
+    rightMotorGroup = new MotorControllerGroup(backRight, frontRight);
+
+    m_myRobot = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
+
+    setDefaultCommand(new DriveCommand(this));
+
+    Shuffleboard.getTab("Drive").addNumber("Front left speed", frontLeft::getSelectedSensorVelocity);
+    Shuffleboard.getTab("Drive").addNumber("Back left speed", backLeft::getSelectedSensorVelocity);
   }
+
+  /**
+   * Send a signal to the robot's drivetrain
+   * 
+   * @param xSpeed The speed to travel in the positive x direction as a percent, [-1, 1]
+   * @param zRotation The rotation speed in the counterclockwise direction as a percent, [-1, 1]
+   */
+  public void arcadeDrive(double xSpeed, double zRotation) {
+    m_myRobot.arcadeDrive(xSpeed, zRotation);
+  }
+
+  /**
+   * Stop the drivetrain
+   */
+  public void stop() {
+    m_myRobot.arcadeDrive(0, 0);
+  }
+
 }

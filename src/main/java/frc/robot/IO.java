@@ -7,8 +7,6 @@ package frc.robot;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.lang.model.util.ElementScanner14;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -29,6 +27,18 @@ public class IO {
     private Button radialDown;
     private Button radialLeft;
     private Map<Integer, Button> customButtons;
+
+    private static IO instance;
+
+    private IO() {}
+
+    public static IO getInstance() {
+        if(instance == null) {
+            instance = new IO();
+            instance.init();
+        }
+        return instance;
+    }
 
 
     public void init(){
@@ -150,11 +160,11 @@ public class IO {
     }
     
     public double getLeftY(){
-        return filter(xbox.getLeftY());
+        return filter(-xbox.getLeftY());
     }
 
     public double getRightY(){
-        return filter(xbox.getRightY());
+        return filter(-xbox.getRightY());
     }
 }
 

@@ -4,14 +4,19 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drivetrain.drivetrain;
+import frc.robot.subsystems.drivetrain.commands.SimpleAuton;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
@@ -21,7 +26,15 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+  private IO io = IO.getInstance();
+  private drivetrain drive = new drivetrain();
 
+  private NetworkTableEntry autonToggleEntry = Shuffleboard.getTab("Auton").add("Use Auton", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+  private NetworkTableEntry autonXSpeedEntry = Shuffleboard.getTab("Auton").add("Auton xSpeed", -0.3).getEntry();
+  private NetworkTableEntry autonZRotationEntry = Shuffleboard.getTab("Auton").add("Auton zRotation", 0.0).getEntry();
+  private NetworkTableEntry autonDriveSecondsEntry = Shuffleboard.getTab("Auton").add("Auton Drive Seconds", 1).getEntry();
+
+  private CommandBase autonCommand;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -31,7 +44,7 @@ public class Robot extends TimedRobot {
  
   @Override
   public void robotInit() {
-    
+    drive.Init();
   }
 
   /**
@@ -57,9 +70,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    
+    autonCommand = new SimpleAuton(
+      drive,
+      autonXSpeedEntry.getDouble(0.0),
+      autonZRotationEntry.getDouble(0.0),
+      autonDriveSecondsEntry.getDouble(0.0)
+    );
+
+    if(autonToggleEntry.getBoolean(false)) {
+      autonCommand.schedule();
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -71,7 +91,9 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-  
+    if(autonCommand != null) {
+      autonCommand.cancel();
+    }
   }
 
   /** This function is called periodically during operator control. */
